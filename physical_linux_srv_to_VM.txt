@@ -1,0 +1,57 @@
+##turning a physical linux server into a vm on proxmox##
+
+
+
+$ sudo dd if=/dev/sda bs=4M status=progress | ssh root@10.14.1.20 'dd of=/var/lib/vz/images/plex_linux.img"
+
+
+
+-->Create a new VM on Proxmox Host
+Note:- dont select the image, in disk create a disk of (making an image of you have backed up using dd) for the vm, also the memory later you can change,
+
+Go to hardware and deatch the disk and remove it.
+
+-->convert IMG to qcow2 formate for proxmox to use
+
+$ qemu-img convert -p -f raw -O qcow2 plex_linux.img plex_linux.qcow2
+
+
+-->Import the new file into our VM ID 102(example)
+
+$qm importdisk 102 /var/lib/vz/images/plex_linux.qcow2 local
+
+-->got VM hardware you will select and edit the unused disk 0(uncheck IP thread and click) Add
+
+
+
+----------------------------------------------------------------------------------------
+
+sudo dd if=/dev/sda bs=4M status=progress of=/path/to/local/folder/plex_linux.img
+
+Explanation:
+if=/dev/sda: Input file (the disk you want to copy).
+
+bs=4M: Block size of 4 megabytes for faster copying.
+
+status=progress: Shows real-time progress during the operation.
+
+of=/path/to/local/folder/plex_linux.img: Output file saved to your specified local directory.
+
+example;- 
+mkdir -p ~/images
+sudo dd if=/dev/sda bs=4M status=progress of=~/images/plex_linux.img
+
+This will create a complete bit-by-bit copy of /dev/sda as plex_linux.img in the ~/images/ directory on your local machine .
+
+Additional Notes:
+Ensure you have sufficient disk space in the target location.
+
+Run with sudo to avoid permission issues when reading from /dev/sda.
+
+You can monitor progress due to the status=progress option .
+
+Let me know if you'd like to compress the image on-the-fly or split it into chunks.
+
+
+
+
