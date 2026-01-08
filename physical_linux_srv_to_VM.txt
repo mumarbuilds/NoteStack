@@ -2,7 +2,7 @@
 
 
 
-$ sudo dd if=/dev/sda bs=4M status=progress | ssh root@10.14.1.20 'dd of=/var/lib/vz/images/plex_linux.img"
+$ sudo dd if=/dev/sda bs=4M status=progress | ssh root@10.14.1.20 'dd of=/var/lib/vz/images/u24_linux.img"
 
 
 
@@ -49,6 +49,7 @@ Ensure you have sufficient disk space in the target location.
 Run with sudo to avoid permission issues when reading from /dev/sda.
 
 You can monitor progress due to the status=progress option .
+
 
 
 
