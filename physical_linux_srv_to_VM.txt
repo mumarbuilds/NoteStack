@@ -1,4 +1,4 @@
-##turning a physical linux server into a vm on proxmox##
+##turning a physical linux server into a vm on proxmox##->Working
 
 
 
@@ -49,6 +49,7 @@ Ensure you have sufficient disk space in the target location.
 Run with sudo to avoid permission issues when reading from /dev/sda.
 
 You can monitor progress due to the status=progress option .
+
 
 
 
