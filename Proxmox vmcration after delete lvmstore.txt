@@ -1,0 +1,86 @@
+lvremove pve/data
+
+lvcreate --name data -l +100%FREE pve
+
+mkfs.ext4 /dev/pve/data    --->>creating deleted file
+
+cd /
+
+mkdir /vmstorage     ----->>>directry create
+
+
+nano /etc/fstab     --->>permanent mount point  entry
+
+/dev/pve/data /vmstorage ext4 defaults 0 1
+
+
+ctrl+o
+enter
+Ctrl+x
+
+
+mount -a
+
+lsblk -pf   --------->>>>>>>check for mount
+
+
+after that open proxmox in brower 
+then goto data center ->Storage /Add
+ID: vmstorage
+path: /vmstorage
+
+ok
+
+
+
+
+
+
+
+
+
+
+adding new hard disk
+
+check which one is physical exthdd here is "sdb"
+fdisk /dev/sdb
+(help m) m
+
+g    ---->>>converting to GPT
+n    ---->>>create a new partitian
+p    --->>enter enter
+1
+
+t -->>change table to linux lvm(no.31)
+l  ---check partictian type
+Linux LVM(8e --<<here)
+
+
+w  -->> write
+
+
+
+lsblk -pf
+df -Th    ----HDD check
+
+pvdisplay
+pvcreate /dev/sdb1   --physical hdd
+pvdisplay
+vgcreate exthdd /dev/sdb1  --->>create virtual hdd
+lvcreate -n vol_vhd2 -l 100%FREE exthdd
+mkfs.ext4 /dev/exthdd/vol_vhd2
+
+cd /
+mkdir /vhd2
+
+nano /etc/fstab
+/dev/pve/data /vhd1 ext4 defaults 0 1 (This is already added in up just for comformation)
+
+
+/dev/exthdd/vol_vhd2 /vhd2 ext4 defaults 0 1
+mount -a
+
+after that open proxmox in brower 
+then goto data center ->Storage /Add
+ID: vhd2 (or any name)
+path: /vhd2
