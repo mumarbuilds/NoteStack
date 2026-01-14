@@ -1,0 +1,35 @@
+https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/
+------------------------------------------------------------------------
+$ ls -l /etc/resolv.conf
+
+lrwxrwxrwx 1 root root 39 Feb 15  2019 /etc/resolv.conf -> ../run/systemd/resolve/stub-resolv.conf
+
+$ cat /etc/resolv.conf
+
+$ ping google.com
+
+$ cat /etc/resolv.conf
+
+nameserver 8.8.4.4
+nameserver 8.8.8.8
+
+$ sudo apt update
+$ sudo apt install resolvconf
+
+$ sudo systemctl status resolvconf.service
+
+$ sudo systemctl start resolvconf.service
+$ sudo systemctl enable resolvconf.service
+$ sudo systemctl status resolvconf.service
+
+
+$ sudo nano /etc/resolvconf/resolv.conf.d/head
+
+nameserver 8.8.8.8 
+nameserver 8.8.4.4
+
+$ sudo systemctl restart resolvconf.service
+$ sudo systemctl restart systemd-resolved.service
+
+
+

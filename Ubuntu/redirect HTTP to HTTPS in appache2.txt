@@ -1,0 +1,46 @@
+How to redirect HTTP to HTTPS in apache on Ubuntu 20.04 LTS
+-------------------------------------------------------------------------
+
+lsb_release -d ; hostname -l ; hostname
+
+apt-get update ; apt-get install apache2 openssl buil-essential -y
+
+a2enmod ssl rewrite
+
+mkdir /etc/apache2/certificate ; cd /etc/apache2/certificate
+
+openssl req -new -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out apache-certificate.crt -keyout apache.key
+
+rm /etc/apache2/site-enable/000-default.conf
+
+nano /etc/apache2/site-enable/000-default.conf
+
+<VirtualHost*:80>
+	ServerName ubuntu.example.com
+	RewriteEngine On
+	RewriteCond %{HTTPS} !=on
+	RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=301,L]
+			    ServerAdmin webmaster@localhost
+			    DocumentRoot /var/www/html
+			    ErrorLog ${APACHE_LOG_DIR}/error.log
+			    CustomLog ${APACHE_LOG_DIR}/access.log comnined
+</virtualHost>
+<VirtualHost*:443>
+	ServerName ubuntu.example.com
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/html
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log comnined
+	SSLEngine on
+	SSLCertificateFile /etc/apache2/certificate/apache-certificate.crt
+	SSLCertificateKeyFile /etc/apache2/certificate/apache.key
+</virtualHost>
+
+
+apache2ctl configtest
+
+systemctl restart apache2 ; systemctl status apache2
+
+curl -l http://ubuntu.example.com
+
+http://ubuntu.example.com | http://192.168.1.80

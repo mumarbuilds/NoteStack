@@ -1,0 +1,29 @@
+Restore Ubuntu without reinstalling:
+
+    Boot to Ubuntu live USB.
+
+    Click Try Ubuntu.
+
+    Open the terminal.
+
+    df -h (To find out the name of your partition that you want to restore. I have a section in the first/third list)
+
+    sudo mount /dev/sda/mnt # where 'sda' is your section name, /dev/sd [a-z] - for SATA); /dev/hd [a-z] - for IDE
+
+    sudo rm /dev/sda/var/lib/apt/lists/lock # where 'sda' is your section name
+
+    sudo rm /dev/sda/var/lib/dpkg/lock # where 'sda' is your section name
+
+    sudo rm /dev/sda/var/lib/dpkg/lock-frontend # where 'sda' is your section name
+
+    Run the following commands:
+
+     sudo dpkg --configure -a  
+     sudo apt clean  
+     sudo apt update --fix-missing   
+     sudo apt install -f  
+     sudo dpkg --configure -a  
+     sudo apt update   
+     sudo apt dist-upgrade  
+     sudo reboot 
+  apt list --upgradable # To check which packages have been updated, they are shown in green.

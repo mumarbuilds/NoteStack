@@ -1,0 +1,75 @@
+mdadm- manage MD devices aka Linux Software RAID
+example:- mdadm -create -verbose /dev/md0 -level=5 -raid-devices=4 /dev/sdb1
+Flags:
+-C, --create Create a new array.
+-V, --verbose Be more verbose about what is happening.
+-l --level= Set RAID level.
+-n, --raid-devices= Specify the number of active devices in the array.
+
+------########-------
+$sudo fdisk /dev/sdc
+
+:m
+:g-->GPT
+:n
+:+10G-->it created 10Gb partition
+:t
+:FD-->used for Linux raid
+:w-->write
+
+$lsblk
+
+$sudo mdadm --create --verbose /dev/md0 --level=5 --raid-devices=3 /dev/sda1 /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
+
+$cat /proc/mdstat --> will show the progress
+
+$ls /dev | grep md
+
+$sudo mdadm --detail --scan
+
+$sudo mdadm --detail --scan > /etc/mdadm/mdadm.conf --->run as root this will save the conf or else it will get del when rebooted
+
+$lsblk
+
+$sudo mkfs.ext4 /dev/md0 --> create a file system on raid partition on md0
+
+$lsblk
+$blkid ---> you will get the UUID for md0 which you need to put in fstab
+$ cd /mnt
+$ls 
+$sudo mkdir md0
+$ls
+$ls -la
+$sudo chown test:test md0/
+$ls -la --> owner of md0 folder is test
+$sudo nano /etc/fstab
+ #md0 20G
+uuid:"urpwuer9023430423j4hk2j3b4" /mnt/md0 ext4 default 0 0
+
+$sudo mount -a
+$blkid
+$lsblk
+
+-------Trobleshooting_mdadm-- URL:-https://www.youtube.com/watch?v=-xP9eUsbNF8----
+$sudo mdadm --stop /dev/md0
+$sudo mdadm --examine /dev/sdb1
+$cat /proc/mdstat
+$sudo mdadm --assemble --scan
+$cat /proc/mdstat
+error will be ex:- [5/4] (U_UUU)
+$sudo mdadm --stop /dev/md0
+$sudo smartctl -a /dev/sde --->disk with issue
+$lsblk
+$lsblk -o NAME,MODEL,SERIAL,WWN,HCTL--> find out the faulty disk and replace it then login.
+
+$sudo mdadm --detail /dev/md0
+-> watch video how to add a encrypted disk then
+$sudo mdadm --add /dev/md0 /dev/sde1
+$cat /proc/mdstat
+$watch --interval 2 cat /proc/mdstat
+$sudo mdadm --examinw /dev/sde1
+$sudo shutdown -r now
+$sudo mdadm --details /dev/md0 --->check raid status
+$sudo smartctl
+$sudo smartctl -a /dev/sdb | less
+$

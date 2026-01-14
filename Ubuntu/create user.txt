@@ -1,0 +1,12 @@
+adduser sammy
+
+usermod -aG sudo Sammy
+
+
+or
+
+->>edit /etc/sudoers
+
+add userame ALL=(ALL) NOPASSWD=ALL
+
+username  ALL=(ALL) PASSWD:ALL

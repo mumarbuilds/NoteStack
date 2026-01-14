@@ -1,0 +1,4 @@
+port 2232
+
+ifactive
+sudo ufw allow 2232/tcp

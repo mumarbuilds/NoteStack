@@ -1,0 +1,166 @@
+https://help.ubuntu.com/community/UbuntuBonding
+https://portal.novoserve.com/knowledgebase/70/Configuring-LACP-on-Ubuntu-18.04-and-Ubuntu-20.04.html
+---------xxxxxxx---------------
+Before we start:
+
+It's very convenient to be root while configuring the network on a server, in order to become root on ubuntu we recommend running sudo -i (for local tasks, sudo -e if you may be connecting to another server).
+
+For LACP to work, LACP also has to be configured on the switch, we will inform you if this is the case. 
+----------------xxxxxx---------------------
+
+#ip link
+
+#touch /etc/netplan/01-netcfg.yaml 
+
+#nano /etc/netplan/01-netcfg.yaml
+
+# /etc/netplan/01-netcfg.yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eno1:
+      dhcp4: no
+    eno2:
+      dhcp4: no
+  bonds:
+    bond0:
+      interfaces: [eno1, eno2]
+      addresses: [192.168.2.2/24]
+      gateway4: 192.186.2.1
+      parameters:
+        mode: 802.3ad
+        transmit-hash-policy: layer3+4
+        mii-monitor-interval: 1
+      nameservers:
+        addresses:
+          - "8.8.8.8"
+          - "9.9.9.9"
+
+-------------xxxxxxxxxxxxxxxxxxxxx-------------------
+About the configuration:
+
+    You should replace eno1 and eno2 with the interfaces you want to make members, you can also define more interfaces and have more than two intefaces in the bond, you do need to turn off dhcp4 on all of them.
+    You should replace the IP address and gateway with your information, you can find this information in our customer portal if this is managed by us.
+    YAML is very sensitive to incorrect indentiation. For this reason, we recommend using 2 spaces per indent level (do not use tabs /!\), this makes it easy to find the correct indentation for a line.
+    You can replace the addresses of the nameservers (8.8.8.8, 9.9.9.9) with your preffered DNS resolvers.
+    For optimal performance, it is very important to include transmit-hash-policy: layer3+4 in the configuration file. This setting affects load-balancing, by default this is set to layer2, this means all traffic to the same mac-address (which our router will always have) will egress over the same interface, limiting performance. Setting it to layer3+4 will split traffic based on the src/dst IP and src/dst port, which results in much better load-balancing.
+-------------------xxxxxxxxxxxxxxxxx--------------------
+
+#netplan apply
+
+#netplan try
+
+#ip address
+
+#ip link ( check bond0 with ip address)
+
+----------xxxxxxxxxxxxxxxxxx-------------------------
+
+$->Run cat /proc/net/bonding/bond0, this will show a lot of information about the bond0 interface. Here are some of the key lines and what they mean:
+
+   -> Bonding Mode: IEEE 802.3ad Dynamic link aggregation
+        Shows the bond is configured with 802.3ad (LACP), this way it negotiates with our switch.
+   -> Transmit Hash Policy: layer3+4 (1)
+        Shows the bond hashing mode is set to layer3+4, this means it's configured properly in our case.
+   -> You should also see a (system mac address) mac-address in the Slave interface sections at the details partner lacp pdu.
+
+$->run ping 8.8.8.8, or another IP which has a low chance of being offline. This will confirm internet connectivity, by default the firewall will allow this type of outbound traffic. If you notice missing icmp_seq numbers, there may be packet loss, please contact our support about this.
+$->You can also check the interface using ethtool bond0, you will see the Speed of the interface in there, this should match the sum of the two interfaces configured, example: Speed: 20000Mb/s
+
+------------xxxxxxxxxxx---------------------------
+
+Pro Tip:
+
+Our network has been configured to accept connections regardless of if LACP has been set up on the server, this means you can temporarily set up an IP address on your server so you can copy the information from this tutorial, edit it in your text editor and then paste it on the server, this decreases the chance of typos :)
+
+You can quickly set up the network for SSH by running the following commands (replace the IP information with the information for your server)
+
+ip addr add 192.168.2.2/24 dev eno1
+ip route add default via 192.168.2.1
+echo 'nameserver' > /etc/resolv.conf
+
+
+--------------xxx1xxx-------------------
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    em1:
+      dhcp4: no
+      dhcp6: no
+    em2:
+      dhcp4: no
+      dhcp6: no
+  bonds:
+    bond0:
+      dhcp4: no
+      dhcp6: no
+      interfaces:
+        - em1
+        - em2
+      macaddress: "xx:xx:xx:xx:2b:62"
+      parameters:
+        mode: 802.3ad
+        lacp-rate: fast
+        mii-monitor-interval: 100
+        transmit-hash-policy: layer2+3
+  bridges:
+    br0:
+      dhcp4: yes
+      dhcp6: yes
+      macaddress: "xx:xx:xx:xx:2b:62"
+      interfaces:
+        - bond0
+
+-----------xxx2xxx------------
+renderer: networkd
+  ethernets:
+    enp130s0f0:
+      dhcp4: no
+    enp130s0f1:
+      dhcp4: no
+  bonds:
+    bond-00:
+      interfaces: [enp130s0f0,enp130s0f1]
+      addresses: [<IPv4>/24]
+      dhcp4: no
+      routes:
+        - to: default
+          via: <gateway_IP>
+          metric: 100
+      nameservers:
+        addresses: [<ns01_IP>,<ns02_IP>]
+        search: [localdom.local]
+      parameters:
+        mode: balance-xor
+        mii-monitor-interval: 1
+----------xxx(3-FINAL-WORKING-Ubuntu-22.04)xxx------------------
+
+# This is the network config written by 'subiquity'
+network:
+  bonds:
+    bond0:
+      addresses:
+      - 10.41.11.90/23
+      interfaces:
+      - ens18
+      - ens19
+      nameservers:
+        addresses:
+        - 8.8.8.8
+        - 1.1.1.1
+        search: []
+      parameters:
+        lacp-rate: fast
+        mode: 802.3ad
+        transmit-hash-policy: encap3+4
+      routes:
+      - to: default
+        via: 10.41.10.1
+  ethernets:
+    ens18: {}
+    ens19: {}
+  version: 2
+
+

@@ -1,0 +1,7 @@
+#hostnamectl
+
+#cat /etc/issue
+
+#cat /etc/os-release
+
+#lsb_release -crid

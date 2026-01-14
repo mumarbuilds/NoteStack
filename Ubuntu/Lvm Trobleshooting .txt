@@ -1,0 +1,62 @@
+https://pve.proxmox.com/wiki/ZFS_on_Linux
+
+https://forum.proxmox.com/threads/need-help-fast-lvm-problems-after-powerloss.109510/
+
+
+Lvm Trobleshooting 
+
+lvs -a
+
+lvdisplay
+
+df -i
+
+# lvdisplay
+  --- Logical volume ---
+  LV Path               /dev/testvg/mylv
+  LV Name                mylv
+  VG Name                testvg
+  LV UUID                1O-axxx-dxxx-qxx-xxxx-pQpz-C
+  LV Write Access        read/write
+  LV Status              NOT available  <==========
+  LV Size                100.00 GiB
+  Current LE             25600
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+
+  # lvchange -ay /dev/testvg/mylv
+---------------------------------------------------------
+
+https://forum.proxmox.com/threads/lvm-not-available-at-boot.11633/
+https://forum.proxmox.com/threads/local-lvm-visible-but-not-accessible.110945/
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/logical_volume_manager_administration/mdatarecover
+
+vgchange -a y 
+----------------------------------------------------------------------------
+sudo lvs
+
+sudo lvremove mydata-vg/volume-lv
+
+man lvcreate
+
+sudo lvcreate -l 100%FREE -n volume1-lv --type raid5 -I 128K mydata-vg /dev/sd[b-d]
+
+sudo lvdisplay -m
+
+sudo lvs -o+lv_all --rows
+
+sudo lvs -o+Layout
+
+sudo pvs
+
+sudo lvconvert --replace /dev/sdb mydata-vg/volume-lv /dev/sde
+
+sudo vgreduce mydata-vg /dev/sdb
+
+sudo vgextend mydata-vg /dev/sdb
+
+
+
+
+

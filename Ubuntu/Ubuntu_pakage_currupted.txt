@@ -1,0 +1,23 @@
+You have unmet dependencies.
+
+Possible cause of unmet dependencies could be corrupted package database and packages weren't installed properly. Try to trun the following commands to fix:
+
+sudo apt-get clean
+
+and
+
+sudo apt-get autoclean
+
+Resolve dependencies using:
+
+sudo apt-get -f install
+
+The -f option is "fix broken". apt will try to correct broken dependencies.
+
+Then run:
+
+sudo dpkg --configure -a
+
+Finally run again:
+
+sudo apt-get -f install

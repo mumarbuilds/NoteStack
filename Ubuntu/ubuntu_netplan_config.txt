@@ -1,0 +1,67 @@
+root@ubuntusrv:~$cat /etc/netplan/00-installer-config.yaml
+root@ubuntusrv:~$nano /etc/netplan/00-installer-config.yaml
+# This is the network config written by 'subiquity'
+network:(18,19,20.4)
+  ethernets:
+    ens18:
+      addresses: [192.168.0.107/24]
+      gateway4: 192.168.0.200
+      nameservers:
+        addresses: [192.168.0.200,192.168.0.5]
+       
+  version: 2
+root@glpisrv:~#netplan apply
+root@glpisrv:~# sudo nano /etc/hostname
+root@glpisrv:~# sudo nano /etc/hosts
+
+
+##error##netplan generate: `gateway4` has been deprecated, use default routes instead##(deleted version:2)
+
+
+# This is the network config written by 'subiquity' work for (22.04)
+
+network:
+  ethernets:
+    ens18:
+      dhcp4: false
+      addresses: [10.10.8.45/23]
+      routes:
+      - to: default
+        via: 10.10.8.1
+      nameservers:
+       addresses: [8.8.8.8,8.8.4.4,192.168.100.71,192.168.100.72]
+version: 2
+
+or 
+
+network:
+    ethernets:
+        enp0s3:
+            dhcp4: false
+            addresses: [10.10.8.45/23]
+            gateway4: 10.10.8.1
+            nameservers:
+              addresses: [8.8.8.8,8.8.4.4,192.168.100.71,192.168.100.72]
+    version: 2
+
+or
+
+
+network:
+  ethernets:
+    ens18:
+      addresses:
+      - 10.10.8.43/23
+      nameservers:
+        addresses:
+        - 192.168.100.71
+        - 8.8.8.8
+        - 192.168.100.71
+        - 8.8.8.8
+        search: []
+      routes:
+      - to: default
+        via: 10.10.8.1
+  version: 2
+
+

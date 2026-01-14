@@ -1,0 +1,42 @@
+create group in ubuntu
+
+sudo addgroup mediagroup
+
+sudo usermod -a -G mediagroup umar
+
+tail /etc/group
+
+
+sudo find sambashare/media/ -type d -exec chmod 755 {} \;
+
+sudo find sambashare/media/ -type f -exec chmod 644 {} \;
+
+------------------------xxxxxxxxxx---------------------------
+
+sudo groupadd new_group
+
+sudo adduser user_name new_group
+
+sudo useradd –G new_group user_name
+
+sudo usermod –a –G group_name user_name
+
+sudo usermod –a –G new_group,new_group2,new_group3 user_name
+
+sudo useradd –G new_group new_user
+
+sudo passwd new_user
+
+
+####Change a Users Primary Group
+sudo usermod –g new_group user_name
+
+####How to Remove a User From a Group
+sudo gpasswd –d user_name new_group
+
+
+###Delete a Group
+sudo groupdel new_group
+
+###Group is Linux
+sudo nano /etc/groups

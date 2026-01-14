@@ -1,0 +1,41 @@
+1. Install samba
+	apt-get update
+	apt install samba
+	ufw enable-->y
+	ufw allow 'Samba'
+	ufw status
+
+2. Create a Samba Public Share Without Authentication
+	nano /etc/samba/smb.conf
+	[public]
+		comment = no need username and password
+		path = /samba/public
+		browseable = yes
+		guest ok = yes
+		writable = yes
+		read only = no
+	mkdir -p /samba/public
+	chmod -R 777 /samba/public
+	systemctl restart smbd.service nmbd.service
+
+3. Create a Private Samba Share
+	[Private]
+		comment = needs username and password to access
+		path = /samba/private/
+		browseable = yes
+		guest ok = no
+		writable = yes
+		valid users = @samba
+
+	useradd net1 (create user to access samba)
+	sudo smbpasswd -a username (set password for net1)
+	sudo groupadd samba (create a group named samba)
+	sudo gpasswd -a username samba (add user net1 to group samba)
+
+	mkdir -p /samba/private
+	chmod -R 777 /samba/private
+	systemctl restart smbd.service nmbd.service
+
+
+
+
