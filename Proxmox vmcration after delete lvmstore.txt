@@ -34,13 +34,7 @@ ok
 
 
 
-
-
-
-
-
-
-adding new hard disk
+-------->>>Adding new hard disk<<<--------------
 
 check which one is physical exthdd here is "sdb"
 fdisk /dev/sdb
@@ -84,3 +78,4 @@ after that open proxmox in brower
 then goto data center ->Storage /Add
 ID: vhd2 (or any name)
 path: /vhd2
+
