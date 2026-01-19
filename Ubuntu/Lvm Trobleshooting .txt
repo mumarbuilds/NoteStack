@@ -25,7 +25,7 @@ df -i
   Allocation             inherit
   Read ahead sectors     auto
 
-  # lvchange -ay /dev/testvg/mylv
+# lvchange -ay /dev/testvg/mylv
 ---------------------------------------------------------
 
 https://forum.proxmox.com/threads/lvm-not-available-at-boot.11633/
@@ -55,6 +55,7 @@ sudo lvconvert --replace /dev/sdb mydata-vg/volume-lv /dev/sde
 sudo vgreduce mydata-vg /dev/sdb
 
 sudo vgextend mydata-vg /dev/sdb
+
 
 
 
