@@ -63,5 +63,3 @@ network:
       - to: default
         via: 10.10.8.1
   version: 2
-
-
