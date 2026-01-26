@@ -96,7 +96,7 @@ So, we need to SSH onto our Zabbix Server and install Certbot
 -> enter email for alerts
 ->Yes for registerwith acme server
 ->No for EFF news and support digital freedom
-->type-> zabbix.strandls.com(example)
+->type-> zabbix.abc.abc(example)
 ->this will deploy certificate to /etc/apache2/sites-available/000-default-le-ssl.conf
 
 ---->>>>Firewall Configuration-cloud<<<<----
@@ -111,6 +111,7 @@ Apache2frontend PHP scripts=80.443
 Zabbix server= 10051
 Zabbix Agent= 10050
 MySQL= 3306
+
 
 
 
