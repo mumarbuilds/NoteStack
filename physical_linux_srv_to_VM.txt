@@ -48,9 +48,7 @@ Ensure you have sufficient disk space in the target location.
 
 Run with sudo to avoid permission issues when reading from /dev/sda.
 
-You can monitor progress due to the status=progress option .
-
-
+You can monitor progress due to the status=progress option . if you are using the older vm it may not support you can skip.
 
 
 
