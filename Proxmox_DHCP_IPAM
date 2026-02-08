@@ -3,3 +3,7 @@
 Zone->VNet->subnet
 ~# apt install dnsmasq && systemctl disable --now dnsmasq
 when ever pve need the service it should call the server and dont want that service to run as a damon.
+
+
+----------------------
+https://www.youtube.com/watch?v=EantX9Rfxls
