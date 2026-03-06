@@ -1,0 +1,120 @@
+FreeRadius
+---------------------
+
+sudo apt update
+sudo apt upgrade -y
+
+
+sudo apt install php apache2 php8.1-fpm freeradius libapache2-mod-php mariadb-server freeradius-mysql freeradius-utils php-{gd,common,mail,mail-mime,mysql,pear,db,mbstring,xml,curl} -y
+
+
+
+sudo systemctl enable --now apache2 && sudo systemctl enable freeradius
+
+
+sudo mysql_secure_installation
+
+
+Enter current password for root (enter for none): enter
+
+Switch to unix_socket authentication [Y/n] n
+
+Change the root password? [Y/n] n
+
+Remove anonymous users? [Y/n] y
+
+Disallow root login remotely? [Y/n] y
+
+Remove test database and access to it? [Y/n] y
+
+Reload privilege tables now? [Y/n] y
+
+----MariaDB------
+sudo mysql -u root -p
+
+CREATE DATABASE radius;
+
+CREATE USER 'radius'@'localhost' IDENTIFIED by 'PASSWORD';
+
+GRANT ALL PRIVILEGES ON radius.* TO 'radius'@'localhost';
+
+FLUSH PRIVILEGES;
+quit;
+
+
+------------xx-------------
+sudo su -
+
+mysql -u root -p radius < /etc/freeradius/3.0/mods-config/sql/main/mysql/schema.sql
+
+exit
+
+sudo ln -s /etc/freeradius/3.0/mods-available/sql /etc/freeradius/3.0/mods-enabled/
+
+
+---------Telling FreeRadius the SQL Login--------
+sudo nano /etc/freeradius/3.0/mods-enabled/sql
+
+
+
+There are a few things you need to change before entering in the login. Below are the things that need changed. Scroll through and make the necessary changes.
+
+driver = "rlm_sql_null" needs to be driver = "rlm_sql_${dialect}"
+
+dialect = "sqlite" needs to be dialect = "mysql"
+
+read_clients = yes needs to be uncommented (No # in front of that line)
+
+client_table = “nas” needs to be uncommented (No # in front of that line)
+
+*-----*comment out all the TLS settings*---------*
+
+ mysql {
+                # If any of the files below are set, TLS encryption is enabled
+#                tls {
+#                        ca_file = "/etc/ssl/certs/my_ca.crt"
+#                        ca_path = "/etc/ssl/certs/"
+#                        certificate_file = "/etc/ssl/certs/private/client.crt"
+#                        private_key_file = "/etc/ssl/certs/private/client.key"
+#                        cipher = "DHE-RSA-AES256-SHA:AES128-SHA"
+
+#                        tls_required = yes
+#                        tls_check_cert = no
+#                        tls_check_cert_cn = no
+#                }
+
+                # If yes, (or auto and libmysqlclient reports warnings are
+                # available), will retrieve and log additional warnings from
+                # the server if an error has occured. Defaults to 'auto'
+                warnings = auto
+
+------------------------Now you can enter in the login. Find the section--------------------------------------------
+
+        # Connection info:
+        #
+        server = "localhost"
+        port = 3306
+        login = "radius"
+        password = "PASSWORD"
+
+----------------------------Finishing FreeRadius config---------------------------------
+
+
+sudo chgrp -h freerad /etc/freeradius/3.0/mods-available/sql
+sudo chown -R freerad:freerad /etc/freeradius/3.0/mods-enabled/sql
+sudo systemctl restart freeradius
+
+----------------------
+
+apt install myphpadmin
+
+
+
+
+
+
+
+
+
+
+
