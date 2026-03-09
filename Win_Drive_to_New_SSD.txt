@@ -1,0 +1,5 @@
+dism /Capture-Image /ImageFile:D:\install.wim /CaptureDir:C:\ /Name:"Windows" /compress:max
+
+dism /Apply-Image /ImageFile:D:\install.wim /Index:1 /ApplyDir:W:\
+
+bcdboot W:\Windows /f UEFI /s S: 
